@@ -97,6 +97,35 @@ def vectorized_contribution(arr: list[int]) -> int:
     Space Complexity: O(n) for contributions array
     """
     n: int = len(arr)
+    contributions: list[int] = []
+    
+    for k in range(n):
+        contributions.append((k + 1) * (n - k))
+    
+    # Calculate dot product
+    total_sum: int = 0
+    for i in range(n):
+        total_sum += arr[i] * contributions[i]
+    
+    return total_sum
+
+def vector_half_contribution(arr: list[int]) -> int:
+    """
+    Calculates sum of all subarray sums using precomputed symmetric contributions array.
+    
+    Exploits the symmetric pattern of contribution coefficients to compute only
+    half the array and mirror it, then calculates dot product with input array.
+    
+    Args:
+        arr: List of integers
+        
+    Returns:
+        int: Sum of all possible subarray sums
+        
+    Time Complexity: O(n)
+    Space Complexity: O(n) for contributions array
+    """
+    n: int = len(arr)
     m: int = (n + 1) // 2  # ceiling division for midpoint
     
     # Compute first half of contributions
@@ -139,9 +168,12 @@ def brute_force_O_n_squared(arr):
     return total_sum
 
 
-def vector_numpy_contribution(arr: list[int] | np.ndarray) -> int:
+def vector_numpy_half_contribution(arr: list[int] | np.ndarray) -> int:
     """
-    Calculates sum of all subarray sums using a fully vectorized NumPy approach.
+    Calculates sum of all subarray sums using NumPy with symmetric optimization.
+    
+    Uses symmetric pattern to compute only half the contributions array,
+    then mirrors it. This tests the cost of array operations vs computation.
     
     Args:
         arr: List or NumPy array of integers
@@ -172,6 +204,33 @@ def vector_numpy_contribution(arr: list[int] | np.ndarray) -> int:
     total_sum = np.dot(arr, contributions)
     return int(total_sum)
 
+def vector_numpy_full_contribution(arr: list[int] | np.ndarray) -> int:
+    """
+    Calculates sum of all subarray sums using full NumPy vectorization.
+    
+    Computes the entire contributions array directly without symmetric
+    optimization to test pure NumPy vectorization performance.
+    
+    Args:
+        arr: List or NumPy array of integers
+    
+    Returns:
+        int: Sum of all possible subarray sums
+    
+    Time Complexity: O(n)
+    Space Complexity: O(n)
+    """
+    arr = np.array(arr, dtype=np.int64)
+    n = len(arr)
+    
+    # Compute full contributions array directly as vector operation
+    k = np.arange(n)  # [0, 1, 2, ..., n-1]
+    contributions = (k + 1) * (n - k)
+    
+    # Compute the dot product (arr · contributions)
+    total_sum = np.dot(arr, contributions)
+    return int(total_sum)
+
 
 # ----------------------------------------------------------------------
 
@@ -186,8 +245,10 @@ if __name__ == "__main__":
         naive_brute_force, 
         optimized_brute_force, 
         contribution_technique, 
-        vectorized_contribution, 
-        vector_numpy_contribution
+        vectorized_contribution,      # Full array computation (Python)
+        vector_half_contribution,     # Half + mirror optimization (Python)
+        vector_numpy_full_contribution,   # Full array computation (NumPy)
+        vector_numpy_half_contribution    # Half + mirror optimization (NumPy)
     ]
     
     print("=" * 70)
@@ -274,7 +335,9 @@ if __name__ == "__main__":
             'optimized_brute_force': 'O(n²)', 
             'contribution_technique': 'O(n)',
             'vectorized_contribution': 'O(n)',
-            'vector_numpy_contribution': 'O(n)'
+            'vector_half_contribution': 'O(n)',
+            'vector_numpy_full_contribution': 'O(n)',
+            'vector_numpy_half_contribution': 'O(n)'
         }.get(func.__name__, 'O(?)')
         
         medal = ["🥇", "🥈", "🥉"][i-1] if i <= 3 else f"{i}."
@@ -284,8 +347,31 @@ if __name__ == "__main__":
     print(f"\n💡 Key Insights:")
     print(f"   • Fastest algorithm: {results[0]['function'].__name__}")
     print(f"   • O(n) algorithms perform {results[-1]['time']/fastest:.0f}x faster than O(n³)")
-    print(f"   • NumPy vectorization adds slight overhead for small arrays")
-    print(f"   • Algorithm complexity theory matches empirical performance")
+    print(f"   • NumPy overhead dominates for small arrays (n={array_size})")
+    
+    # Find Python vs NumPy implementations for comparison
+    python_algos = [r for r in results if 'numpy' not in r['function'].__name__ and r['function'].__name__ != 'naive_brute_force' and r['function'].__name__ != 'optimized_brute_force' and r['function'].__name__ != 'brute_force_O_n_squared']
+    numpy_algos = [r for r in results if 'numpy' in r['function'].__name__]
+    
+    if python_algos and numpy_algos:
+        fastest_python = min(python_algos, key=lambda x: x['time'])
+        fastest_numpy = min(numpy_algos, key=lambda x: x['time'])
+        overhead = fastest_numpy['time'] / fastest_python['time']
+        print(f"   • NumPy adds {overhead:.1f}x overhead vs pure Python for this problem size")
+    
+    # Compare optimization strategies
+    full_algos = [r for r in results if 'vectorized_contribution' in r['function'].__name__ or 'numpy_full' in r['function'].__name__]
+    half_algos = [r for r in results if 'half' in r['function'].__name__]
+    
+    if full_algos and half_algos:
+        avg_full = sum(r['time'] for r in full_algos) / len(full_algos)
+        avg_half = sum(r['time'] for r in half_algos) / len(half_algos) 
+        if avg_half < avg_full:
+            print(f"   • Half-array + mirror optimization saves {(1 - avg_half/avg_full)*100:.1f}% computation time")
+        else:
+            print(f"   • Full computation is {(1 - avg_full/avg_half)*100:.1f}% faster than half + mirror approach")
+    
+    print(f"   • Python 3.13+ JIT compilation may favor simple loops over NumPy for small data")
     
 
 

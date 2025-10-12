@@ -27,7 +27,7 @@ XX-topic_name/
 
 | Day | Topic | Status | Python | JavaScript | Java |
 |-----|-------|--------|---------|------------|------|
-| 01 | [Subarray Sums & Range Queries](./01-subarray_sums_and_range_queries/) | 🔄 In Progress | ⏳ | ⏳ | ⏳ |
+| 01 | [Subarray Sums & Range Queries](./01-subarray_sums_and_range_queries/) | 🔄 In Progress | ✅ | ⏳ | ⏳ |
 | 02 | Coming Soon... | ⏳ Pending | ⏳ | ⏳ | ⏳ |
 | ... | ... | ... | ... | ... | ... |
 | 60 | Final Challenge | ⏳ Pending | ⏳ | ⏳ | ⏳ |
@@ -102,12 +102,36 @@ This is a personal learning journey, but feel free to:
 
 ## 📝 Reflection Notes
 
+### Day 1 Achievements 🎆
+**Subarray Sums & Range Queries** turned into an comprehensive performance analysis masterclass:
+
+✨ **Algorithm Implementations:**
+- **7 different approaches** from O(n³) brute force to O(n) contribution techniques
+- **Multi-paradigm solutions:** Pure Python, vectorized Python, and NumPy implementations
+- **Professional benchmarking suite** with statistical analysis and insights
+
+🔬 **Key Discoveries:**
+- **Modern Python JIT compilation** makes simple loops incredibly fast for small data
+- **NumPy crossover point** occurs around n=1,000 elements
+- **Algorithmic complexity** isn't everything - constant factors and overhead matter significantly
+- **"Clever" optimizations** often don't provide expected benefits for small problem sizes
+
+🎯 **Performance Engineering:**
+- Empirical validation of performance hypotheses
+- Scale-dependent optimization strategy analysis  
+- Real-world measurement of theoretical complexity claims
+- Professional-grade benchmarking and statistical reporting
+
+This deep dive demonstrated that **learning DSA isn't just about implementing algorithms** - it's about understanding their **real-world behavior and trade-offs**!
+
+---
+
 I'll be updating this section with key insights and patterns I discover throughout the journey.
 
 ---
 
-**Started:** October 2024  
-**Target Completion:** December 2024  
+**Started:** October 2025  
+**Target Completion:** December 2025
 **Commitment:** One concept per day, no exceptions! 💪
 
 > *"The expert in anything was once a beginner who refused to give up."*

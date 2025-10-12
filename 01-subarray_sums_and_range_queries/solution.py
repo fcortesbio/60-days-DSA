@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations  # For Python 3.9+ list[int] syntax
+import numpy as np
 import timeit 
 import time
 
@@ -9,7 +11,6 @@ Python Implementation
 Author: Andres
 Date: October 2024
 """
-from __future__ import annotations  # For Python 3.9+ list[int] syntax
 def naive_brute_force(arr: list[int]) -> int:
     """
     Calculates sum of all subarray sums using triple nested loops.
@@ -138,6 +139,40 @@ def brute_force_O_n_squared(arr):
     return total_sum
 
 
+def vector_numpy_contribution(arr: list[int] | np.ndarray) -> int:
+    """
+    Calculates sum of all subarray sums using a fully vectorized NumPy approach.
+    
+    Args:
+        arr: List or NumPy array of integers
+    
+    Returns:
+        int: Sum of all possible subarray sums
+    
+    Time Complexity: O(n)
+    Space Complexity: O(n)
+    """
+    arr = np.array(arr, dtype=np.int64)
+    n = len(arr)
+    m = (n + 1) // 2  # ceiling division
+
+    # Compute first half contributions directly as a vector
+    k = np.arange(m)  # [0, 1, 2, ...]
+    first_half = (k + 1) * (n - k)
+
+    # Build the symmetric full contribution array
+    if n % 2 == 0:
+        mirror = first_half[::-1]
+    else:
+        mirror = first_half[:-1][::-1]
+    
+    contributions = np.concatenate((first_half, mirror))
+
+    # Compute the dot product (arr · contributions)
+    total_sum = np.dot(arr, contributions)
+    return int(total_sum)
+
+
 # ----------------------------------------------------------------------
 
 
@@ -146,7 +181,30 @@ if __name__ == "__main__":
     input_array_2: list[int] = [2, 1, 3]
     input_array_bulk: list[int] = [i for i in range(0, 99)]
     
-
+    functions = [naive_brute_force, optimized_brute_force, contribution_technique, vectorized_contribution, vector_numpy_contribution]
+       
+    print("Array 1: [1, 2, 3], expected sum: 20")
+    for function in functions:
+        print(function.__name__, ":", function(input_array_1))
+    print("\n"); time.sleep(1)
+    
+    print("Array 2: [2, 1, 3], expected sum: 20")
+    for function in functions:
+        print(function.__name__, ":", function(input_array_2))
+    print("\n"); time.sleep(1)
+    
+    ## Benchmarking with timeit
+    test_timer = time.perf_counter
+    replicas = 1000
+    
+    def test_implementation(function, array):
+        return timeit.timeit(
+            lambda: function(array),
+            number=replicas,
+            timer=test_timer)
+    
+    for function in functions:
+        print("Testing", function.__name__, "with 100 elements, ${replicas} replicas: ", test_implementation(function, input_array_bulk))
     
 
 

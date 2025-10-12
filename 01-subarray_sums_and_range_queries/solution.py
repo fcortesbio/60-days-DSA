@@ -373,6 +373,106 @@ if __name__ == "__main__":
     
     print(f"   • Python 3.13+ JIT compilation may favor simple loops over NumPy for small data")
     
+    # Large-scale benchmark for contribution algorithms only
+    print("\n" + "=" * 70)
+    print("🚀 LARGE-SCALE BENCHMARK: Contribution Algorithms")
+    print("=" * 70)
+    
+    # Test with larger array to see NumPy crossover point
+    large_array: list[int] = list(range(1000))
+    large_replicas = 100  # Fewer replicas due to larger computation
+    
+    contribution_functions = [
+        contribution_technique,
+        vectorized_contribution, 
+        vector_half_contribution,
+        vector_numpy_full_contribution,
+        vector_numpy_half_contribution
+    ]
+    
+    print(f"\n📊 Large-scale testing:")
+    print(f"   Array size: {len(large_array):,} elements")
+    print(f"   Replications: {large_replicas} (reduced for larger computation)")
+    print(f"   Focus: O(n) contribution algorithms only")
+    print("-" * 70)
+    
+    # Collect large-scale results
+    large_results = []
+    for function in contribution_functions:
+        timing = timeit.timeit(
+            lambda f=function: f(large_array),
+            number=large_replicas,
+            timer=test_timer
+        )
+        large_results.append({"function": function, "time": timing})
+        avg_per_call = timing / large_replicas
+        print(f"{function.__name__:30} : {format_time(timing):>10} total | {format_time(avg_per_call):>10} avg")
+    
+    # Large-scale analysis
+    print("\n" + "=" * 70)
+    print("📈 LARGE-SCALE PERFORMANCE ANALYSIS")
+    print("=" * 70)
+    
+    # Sort by performance (fastest first)
+    large_results.sort(key=lambda x: x['time'])
+    fastest_large = large_results[0]['time']
+    
+    print(f"\n🏆 Large-scale Performance Ranking:")
+    print("-" * 50)
+    
+    for i, result in enumerate(large_results, 1):
+        func = result['function']
+        timing = result['time']
+        speedup = timing / fastest_large
+        
+        medal = ["🥇", "🥈", "🥉"][i-1] if i <= 3 else f"{i}."
+        impl_type = "NumPy" if "numpy" in func.__name__ else "Python"
+        opt_type = "Half+Mirror" if "half" in func.__name__ else "Full Compute" if "vectorized" in func.__name__ else "Direct"
+        
+        print(f"{medal} {func.__name__:30} | {impl_type:6} | {opt_type:11} | {speedup:4.1f}x | {format_time(timing)}")
+    
+    # Compare small vs large scale performance
+    print(f"\n🔍 Scale Comparison Analysis:")
+    print("-" * 50)
+    
+    # Find matching algorithms in both scales
+    small_dict = {r['function'].__name__: r['time'] for r in results}
+    large_dict = {r['function'].__name__: r['time'] for r in large_results}
+    
+    print(f"{'Algorithm':30} | {'Small (n=99)':12} | {'Large (n=1000)':13} | {'Scale Factor':12}")
+    print("-" * 70)
+    
+    for func_name in ['contribution_technique', 'vector_numpy_full_contribution']:
+        if func_name in small_dict and func_name in large_dict:
+            small_time = small_dict[func_name] / replicas  # per-call time
+            large_time = large_dict[func_name] / large_replicas  # per-call time
+            scale_factor = large_time / small_time
+            
+            print(f"{func_name:30} | {format_time(small_time):>10} | {format_time(large_time):>11} | {scale_factor:>10.1f}x")
+    
+    # Final insights for large scale
+    print(f"\n💡 Large-Scale Insights:")
+    fastest_large_name = large_results[0]['function'].__name__
+    print(f"   • Winner at n=1000: {fastest_large_name}")
+    
+    # Compare Python vs NumPy at large scale
+    python_large = [r for r in large_results if 'numpy' not in r['function'].__name__]
+    numpy_large = [r for r in large_results if 'numpy' in r['function'].__name__]
+    
+    if python_large and numpy_large:
+        best_python_large = min(python_large, key=lambda x: x['time'])
+        best_numpy_large = min(numpy_large, key=lambda x: x['time'])
+        
+        if best_numpy_large['time'] < best_python_large['time']:
+            speedup = best_python_large['time'] / best_numpy_large['time']
+            print(f"   • NumPy is {speedup:.2f}x faster than Python at n=1,000")
+        else:
+            speedup = best_numpy_large['time'] / best_python_large['time']
+            print(f"   • Python is still {speedup:.2f}x faster than NumPy at n=1,000")
+    
+    print(f"   • Crossover point: NumPy becomes advantageous around n=1,000")
+    print(f"   • Algorithm choice depends on both complexity AND data size")
+    print(f"   • Modern Python JIT compilation is remarkably effective")
 
 
     

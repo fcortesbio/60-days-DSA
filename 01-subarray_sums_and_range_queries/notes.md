@@ -7,7 +7,7 @@
 ## 📚 Concept 1: Sum of All Subarray Sums
 
 ### Problem Statement
-Given an integer array `A` of length `N`, find the sum of all subarray sums.
+Given an integer array $A$ of length $N$, find the sum of all subarray sums.
 
 **Definition:** A subarray is a contiguous part of an array obtained by deleting zero or more elements from either end. A subarray sum is the sum of all elements in that subarray.
 
@@ -46,20 +46,66 @@ Subarrays:
 
 ### 💻 Solutions
 
-#### 🐌 Approach 1: Brute Force
-Generate all possible subarrays and calculate their sums.
+#### 🐌 Approach 1: Naive Brute Force
+**Strategy**: Generate all possible subarrays and calculate their sums.
 
 **Algorithm:**
-1. Use three nested loops
-2. Outer two loops generate subarray boundaries
-3. Inner loop calculates sum of current subarray
+* Use three nested loops
+* Outer two loops generate subarray boundaries
+* Inner loop calculates sum of current subarray
+
+**Pseudocode**:
+```pseudocode
+FUNCTION naive_brute_force(array):
+    n = length(array)
+    total_sum = 0
+    
+    FOR i FROM 0 TO n - 1:
+
+        FOR j FROM i TO n - 1:
+            subarray_sum = 0
+
+            FOR k FROM i TO j:
+                subarray_sum += array[k]
+
+            total_sum += subarray_sum
+    
+    RETURN total_sum
+```
 
 **Complexity:**
 - 🕰️ Time: `O(n³)`
-- 💾 Space: `O(1)`
 
-#### ✨ Approach 2: Contribution Technique (Optimized)
-Instead of generating subarrays, count how many times each element contributes to the final sum.
+### Approach 2: Optimized Brute Force
+**Strategy**: Execute running sum while new subarray is generated.
+
+**Algorithm**:
+* Use two nested loops instead of three
+* the outer loop picks the starting index $i$ of every subarray
+* the inner loop extends the subarray to each possible index $j$ (from $i$ to $n-1$)
+* A variable accumulates the running sum for the subarray `[i, ..., j]` — this avoids the need for a third loop that explicitly sums each array from scratch
+
+**Pseudocode**:
+```pseudocode
+FUNCTION optimized_brute_force(array):
+    n = length(array)
+    total_sum = 0
+    
+    FOR i FROM 0 TO n - 1:
+        current_subarray_sum = 0
+
+        FOR j FROM i TO n - 1:
+            current_subarray_sum += array[j]
+            total_sum += current_subarray_sum
+    
+    RETURN total_sum
+```
+
+**Complexity:**
+- 🕰️ Time: `O(n²)`
+
+#### ✨ Approach 3: Contribution Technique
+Instead of generating subarrays, we realize we can count how many times each element contributes to the final sum.
 
 **Key Insight:** Element at index `i` appears in `(i + 1) × (n - i)` subarrays
 
@@ -74,11 +120,138 @@ Instead of generating subarrays, count how many times each element contributes t
 - `3 × 3 = 9`
 - **Total:** `3 + 8 + 9 = 20`
 
+**Mathematical Derivation**
+
+Consider an array: `arr = [a₀, a₁, a₂, ..., aₙ₋₁]`
+
+**Question:** How many subarrays contain element `arr[k]` at position `k`?
+
+**Analysis:**
+For element `arr[k]` to be included in a subarray `[i, j]`, we need:
+- Starting index: `i ≤ k` 
+- Ending index: `j ≥ k`
+
+**Counting Possibilities:**
+- **Left choices:** Starting index `i` can be `{0, 1, 2, ..., k}` → **(k + 1)** options
+- **Right choices:** Ending index `j` can be `{k, k+1, ..., n-1}` → **(n - k)** options
+- **Total subarrays:** Each left choice can pair with each right choice
+
+**Formula:** Number of subarrays containing `arr[k]` = **(k + 1) × (n - k)**
+
+**Contribution Calculation:**
+Since `arr[k]` appears exactly once in each of these subarrays:
+- **Element contribution:** `arr[k] × (k + 1) × (n - k)`
+
+**Final Sum:**
+Sum all individual contributions:
+$$\text{Total Sum} = \sum_{k=0}^{n-1} arr[k] \times (k + 1) \times (n - k)$$
+
+**Complexity:** O(n) time - single pass through the array
+
+
+**Pseudocode**:
+```pseudocode
+FUNCTION contribution_technique(array):
+    n = length(array)
+    total_sum = 0
+    
+    FOR k FROM 0 TO n - 1:
+        left_choices = k + 1        // positions where subarray can start
+        right_choices = n - k       // positions where subarray can end  
+        contribution = array[k] * left_choices * right_choices
+        total_sum = total_sum + contribution
+    
+    RETURN total_sum
+```
+
 **Complexity:**
-- 🕰️ Time: `O(n)`
-- 💾 Space: `O(1)`
+- 🕰️ Time: `O(n)` - single pass through array
+- 💾 Space: `O(1)` - only using constant extra space
 
 ---
+
+#### ✨ Approach 4: Vectorized Contribution (Space-Time Trade-off)
+
+**Strategy**: 
+Express the subarray sum as the dot product between the original array and a precomputed contributions array.
+
+**Key Insight:**
+Since the contribution formula $c_k = (k + 1) × (n - k)$ creates a **symmetric pattern**, we can optimize memory usage by computing only half the contributions array.
+
+**Pattern Analysis:**
+For arrays of different lengths, the contributions form symmetric patterns:
+
+```
+n = 1: [1]              # single element
+n = 2: [2, 2]           # symmetric pair  
+n = 3: [3, 4, 3]        # symmetric with center peak
+n = 4: [4, 6, 6, 4]     # symmetric pair peaks
+n = 5: [5, 8, 9, 8, 5]  # symmetric with center peak
+n = 6: [6, 10, 12, 12, 10, 6] # symmetric pair peaks
+```
+
+**Mathematical Properties:**
+- The contribution formula $c_k = (k + 1) × (n - k)$ is a quadratic function in $k$
+- Expanding: $c_k = -k^2 + (n-1)k + n$ (downward-opening parabola)
+- **Symmetry property:** $c_k = c_{n-k-1}$ for all valid $k$
+
+**Optimization Strategy:**
+Since the contributions array is symmetric, we can:
+1. Compute only the first half of the contributions
+2. Mirror this half to create the complete array
+3. Calculate the final sum as a dot product
+
+**Algorithm Steps:**
+1. Calculate midpoint: `m = ⌈n/2⌉` (includes center for odd lengths)
+2. Compute contributions for indices `0` to `m-1` 
+3. Mirror the array appropriately:
+   - **Even length:** Mirror the entire first half
+   - **Odd length:** Mirror all except the last element (center is unique)
+4. Calculate dot product with original array
+
+**Example with n=5:**
+- First half: `[5, 8, 9]` (indices 0, 1, 2)
+- Mirror (excluding center): `[8, 5]` (reverse of indices 0, 1)
+- Complete contributions: `[5, 8, 9, 8, 5]`
+
+**Pseudocode**:
+```pseudocode
+FUNCTION vectorized_contribution(array):
+    n = length(array)
+    m = (n + 1) // 2  # ceiling division for midpoint
+    
+    // Compute first half of contributions
+    first_half = new Array
+    FOR k FROM 0 to m-1:
+        APPEND (k + 1) * (n - k) TO first_half
+    
+    // Create mirror based on array length parity
+    IF n % 2 == 0:
+        // Even: mirror entire first half
+        mirror = REVERSE(first_half)
+    ELSE: 
+        // Odd: mirror all except center element
+        mirror = REVERSE(first_half[0:m-2])
+    
+    contributions = CONCAT(first_half, mirror)
+    
+    // Calculate dot product
+    total_sum = 0
+    FOR i FROM 0 TO n - 1:
+        total_sum += array[i] * contributions[i]
+    
+    RETURN total_sum
+```
+
+**Complexity:**
+- 🕰️ Time: `O(n)` - single pass through array
+- 💾 Space: `O(n)` for the contributions array
+
+**Trade-off Analysis:**
+- **Pro:** Can precompute contributions once and reuse for multiple arrays of same length
+- **Con:** Uses additional O(n) space compared to direct contribution method
+- **Use case:** Beneficial when processing multiple arrays of the same length
+
 
 ## 📚 Concept 2: Range Sum Query
 

@@ -6,7 +6,8 @@ Python Implementation
 Author: Andres
 Date: October 2024
 """
-def naive_brute_force(arr):
+from __future__ import annotations  # For Python 3.9+ list[int] syntax
+def naive_brute_force(arr: list[int]) -> int:
     """
     Calculates sum of all subarray sums using triple nested loops.
     
@@ -19,16 +20,16 @@ def naive_brute_force(arr):
     Time Complexity: O(n³)
     Space Complexity: O(1)
     """
-    n = len(arr)
-    total_sum = 0
+    n: int = len(arr)
+    total_sum: int = 0
     for i in range(n):
         for j in range(i, n):
             # Third loop implicit in sum() function
-            subarray_sum = sum(arr[i:j+1])
+            subarray_sum: int = sum(arr[i:j+1])
             total_sum += subarray_sum
     return total_sum
 
-def optimized_brute_force(arr):
+def optimized_brute_force(arr: list[int]) -> int:
     """
     Calculates sum of all subarray sums using running sum technique.
     
@@ -41,16 +42,16 @@ def optimized_brute_force(arr):
     Time Complexity: O(n²)
     Space Complexity: O(1)
     """
-    n = len(arr)
-    total_sum = 0
+    n: int = len(arr)
+    total_sum: int = 0
     for i in range(n):
-        current_subarray_sum = 0
+        current_subarray_sum: int = 0
         for j in range(i, n):
             current_subarray_sum += arr[j]
             total_sum += current_subarray_sum
     return total_sum
 
-def contribution_technique(arr):
+def contribution_technique(arr: list[int]) -> int:
     """
     Calculates sum of all subarray sums using element contribution method.
     
@@ -66,16 +67,16 @@ def contribution_technique(arr):
     Time Complexity: O(n)
     Space Complexity: O(1)
     """
-    n = len(arr)
-    total_sum = 0
+    n: int = len(arr)
+    total_sum: int = 0
     for i in range(n):
-        left_choices = i + 1        # positions where subarray can start
-        right_choices = n - i       # positions where subarray can end
-        contribution = arr[i] * left_choices * right_choices
+        left_choices: int = i + 1        # positions where subarray can start
+        right_choices: int = n - i       # positions where subarray can end
+        contribution: int = arr[i] * left_choices * right_choices
         total_sum += contribution
     return total_sum
 
-def vectorized_contribution(arr):
+def vectorized_contribution(arr: list[int]) -> int:
     """
     Calculates sum of all subarray sums using precomputed symmetric contributions array.
     
@@ -91,26 +92,26 @@ def vectorized_contribution(arr):
     Time Complexity: O(n)
     Space Complexity: O(n) for contributions array
     """
-    n = len(arr)
-    m = (n + 1) // 2  # ceiling division for midpoint
+    n: int = len(arr)
+    m: int = (n + 1) // 2  # ceiling division for midpoint
     
     # Compute first half of contributions
-    first_half = []
+    first_half: list[int] = []
     for k in range(m):
         first_half.append((k + 1) * (n - k))
     
     # Create mirror based on array length parity
     if n % 2 == 0:
         # Even: mirror entire first half
-        mirror = first_half[::-1]
+        mirror: list[int] = first_half[::-1]
     else:
         # Odd: mirror all except center element (last in first_half)
-        mirror = first_half[:-1][::-1]
+        mirror: list[int] = first_half[:-1][::-1]
     
-    contributions = first_half + mirror
+    contributions: list[int] = first_half + mirror
     
     # Calculate dot product
-    total_sum = 0
+    total_sum: int = 0
     for i in range(n):
         total_sum += arr[i] * contributions[i]
     
@@ -120,9 +121,9 @@ def vectorized_contribution(arr):
 
 
 if __name__ == "__main__":
-    input_array_1 = [1, 2, 3]
-    input_array_2 = [2, 1, 3]
-    input_array_bulk = [i for i in range(0, 99)]
+    input_array_1: list[int] = [1, 2, 3]
+    input_array_2: list[int] = [2, 1, 3]
+    input_array_bulk: list[int] = [i for i in range(0, 99)]
     
 
     

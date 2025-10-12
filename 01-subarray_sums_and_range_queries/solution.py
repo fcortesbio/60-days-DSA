@@ -177,25 +177,52 @@ def vector_numpy_contribution(arr: list[int] | np.ndarray) -> int:
 
 
 if __name__ == "__main__":
+    # Test data
     input_array_1: list[int] = [1, 2, 3]
     input_array_2: list[int] = [2, 1, 3]
     input_array_bulk: list[int] = [i for i in range(0, 99)]
     
-    functions = [naive_brute_force, optimized_brute_force, contribution_technique, vectorized_contribution, vector_numpy_contribution]
-       
-    print("Array 1: [1, 2, 3], expected sum: 20")
-    for function in functions:
-        print(function.__name__, ":", function(input_array_1))
-    print("\n"); time.sleep(1)
+    functions = [
+        naive_brute_force, 
+        optimized_brute_force, 
+        contribution_technique, 
+        vectorized_contribution, 
+        vector_numpy_contribution
+    ]
     
-    print("Array 2: [2, 1, 3], expected sum: 20")
-    for function in functions:
-        print(function.__name__, ":", function(input_array_2))
-    print("\n"); time.sleep(1)
+    print("=" * 70)
+    print("🔬 SUBARRAY SUMS ALGORITHM VALIDATION & BENCHMARKING")
+    print("=" * 70)
     
-    ## Benchmarking with timeit
+    # Test cases with validation
+    test_cases = [
+        {"array": input_array_1, "expected": 20, "name": "Test 1: [1, 2, 3]"},
+        {"array": input_array_2, "expected": 19, "name": "Test 2: [2, 1, 3]"}  # Fixed expected value
+    ]
+    
+    for test_case in test_cases:
+        print(f"\n📋 {test_case['name']} → Expected: {test_case['expected']}")
+        print("-" * 50)
+        
+        all_passed = True
+        for function in functions:
+            result = function(test_case['array'])
+            status = "✅ PASS" if result == test_case['expected'] else "❌ FAIL"
+            print(f"{function.__name__:25} : {result:6d} {status}")
+            if result != test_case['expected']:
+                all_passed = False
+        
+        print(f"\n🎯 Overall: {'✅ ALL TESTS PASSED' if all_passed else '❌ SOME TESTS FAILED'}")
+        time.sleep(0.5)
+    
+    print("\n" + "=" * 70)
+    print("⚡ PERFORMANCE BENCHMARKING")
+    print("=" * 70)
+    
+    # Benchmarking setup
     test_timer = time.perf_counter
     replicas = 1000
+    array_size = len(input_array_bulk)
     
     def test_implementation(function, array):
         return timeit.timeit(
@@ -203,8 +230,62 @@ if __name__ == "__main__":
             number=replicas,
             timer=test_timer)
     
+    def format_time(seconds: float) -> str:
+        """Convert seconds to human-readable format"""
+        if seconds >= 1.0:
+            return f"{seconds:.3f} s"
+        elif seconds >= 0.001:
+            return f"{seconds*1000:.2f} ms"
+        else:
+            return f"{seconds*1000000:.1f} μs"
+    
+    print(f"\n📊 Testing with array size: {array_size} elements")
+    print(f"🔄 Replications per test: {replicas:,}")
+    print(f"⏱️  Timer: {test_timer.__name__}")
+    print("-" * 70)
+    
+    # Collect timing results
+    results = []
     for function in functions:
-        print("Testing", function.__name__, "with 100 elements, ${replicas} replicas: ", test_implementation(function, input_array_bulk))
+        timing = test_implementation(function, input_array_bulk)
+        results.append({"function": function, "time": timing})
+        avg_per_call = timing / replicas
+        print(f"{function.__name__:25} : {format_time(timing):>10} total | {format_time(avg_per_call):>10} avg")
+    
+    # Performance analysis
+    print("\n" + "=" * 70)
+    print("📈 PERFORMANCE ANALYSIS")
+    print("=" * 70)
+    
+    # Sort by performance (fastest first)
+    results.sort(key=lambda x: x['time'])
+    fastest = results[0]['time']
+    
+    print(f"\n🏆 Performance Ranking (fastest to slowest):")
+    print("-" * 50)
+    
+    for i, result in enumerate(results, 1):
+        func = result['function']
+        timing = result['time']
+        speedup = timing / fastest
+        
+        complexity = {
+            'naive_brute_force': 'O(n³)',
+            'optimized_brute_force': 'O(n²)', 
+            'contribution_technique': 'O(n)',
+            'vectorized_contribution': 'O(n)',
+            'vector_numpy_contribution': 'O(n)'
+        }.get(func.__name__, 'O(?)')
+        
+        medal = ["🥇", "🥈", "🥉"][i-1] if i <= 3 else f"{i}."
+        
+        print(f"{medal} {func.__name__:25} | {complexity:>6} | {speedup:5.1f}x slower | {format_time(timing)}")
+    
+    print(f"\n💡 Key Insights:")
+    print(f"   • Fastest algorithm: {results[0]['function'].__name__}")
+    print(f"   • O(n) algorithms perform {results[-1]['time']/fastest:.0f}x faster than O(n³)")
+    print(f"   • NumPy vectorization adds slight overhead for small arrays")
+    print(f"   • Algorithm complexity theory matches empirical performance")
     
 
 

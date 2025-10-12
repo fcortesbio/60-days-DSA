@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import timeit 
+import time
+
 """
 Day 1: Subarray Sums & Range Queries
 Python Implementation
@@ -116,6 +119,24 @@ def vectorized_contribution(arr: list[int]) -> int:
         total_sum += arr[i] * contributions[i]
     
     return total_sum
+
+
+def brute_force_O_n_squared(arr):
+    """
+    Calculates the sum of all subarray sums in O(n^2) time.
+    """
+    n = len(arr)
+    total_sum = 0
+    for i in range(n):
+        current_subarray_sum = 0
+        for j in range(i, n):
+            # Calculate the sum for arr[i...j] by adding arr[j] to the previous sum
+            current_subarray_sum += arr[j]
+            # Add the current subarray sum to the total
+            total_sum += current_subarray_sum
+
+    return total_sum
+
 
 # ----------------------------------------------------------------------
 

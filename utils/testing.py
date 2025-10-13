@@ -42,7 +42,7 @@ def run_validation_tests(
     
     for test_case in test_cases:
         if verbose:
-            print(f"\\n📋 {test_case.name} → Expected: {test_case.expected}")
+            print(f"\n📋 {test_case.name} → Expected: {test_case.expected}")
             print("-" * 50)
         
         test_case_passed = True
@@ -61,7 +61,7 @@ def run_validation_tests(
         
         if verbose:
             status_text = "✅ ALL TESTS PASSED" if test_case_passed else "❌ SOME TESTS FAILED"
-            print(f"\\n🎯 Test Case Result: {status_text}")
+            print(f"\n🎯 Test Case Result: {status_text}")
             time.sleep(0.1)  # Brief pause for readability
     
     if verbose:
@@ -152,7 +152,7 @@ def _print_validation_summary(results: List[ValidationResult], overall_passed: b
         results: List of all validation results
         overall_passed: Whether all tests passed
     """
-    print("\\n" + "=" * SECTION_WIDTH)
+    print("\n" + "=" * SECTION_WIDTH)
     print("📊 VALIDATION SUMMARY")
     print("=" * SECTION_WIDTH)
     
@@ -170,7 +170,7 @@ def _print_validation_summary(results: List[ValidationResult], overall_passed: b
             function_stats[func_name]["failed"] += 1
     
     # Print function-wise summary
-    print(f"\\n🎯 Results by Function:")
+    print(f"\n🎯 Results by Function:")
     print("-" * 50)
     
     for func_name, stats in function_stats.items():
@@ -185,7 +185,7 @@ def _print_validation_summary(results: List[ValidationResult], overall_passed: b
     total_passed = sum(1 for r in results if r.passed)
     overall_pct = (total_passed / total_tests) * 100 if total_tests > 0 else 0
     
-    print(f"\\n🏆 Overall Results:")
+    print(f"\n🏆 Overall Results:")
     print(f"   • Total tests: {total_tests}")
     print(f"   • Passed: {total_passed} ({overall_pct:.1f}%)")
     print(f"   • Failed: {total_tests - total_passed}")
@@ -194,7 +194,7 @@ def _print_validation_summary(results: List[ValidationResult], overall_passed: b
     # Show errors if any
     error_results = [r for r in results if not r.passed and r.error_message]
     if error_results:
-        print(f"\\n❌ Error Details:")
+        print(f"\n❌ Error Details:")
         for result in error_results:
             print(f"   • {result.function_name}: {result.error_message}")
 

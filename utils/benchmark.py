@@ -59,11 +59,11 @@ def benchmark_functions(
     if timer is None:
         timer = time.perf_counter
     
-    print("\\n" + "=" * SECTION_WIDTH)
+    print("\n" + "=" * SECTION_WIDTH)
     print("⚡ PERFORMANCE BENCHMARKING")
     print("=" * SECTION_WIDTH)
     
-    print(f"\\n📊 Testing with array size: {len(test_array)} elements")
+    print(f"\n📊 Testing with array size: {len(test_array)} elements")
     print(f"🔄 Replications per test: {replicas:,}")
     print(f"⏱️  Timer: {timer.__name__}")
     print("-" * SECTION_WIDTH)
@@ -119,7 +119,7 @@ def analyze_performance(
         print("No results to analyze")
         return
     
-    print("\\n" + "=" * SECTION_WIDTH)
+    print("\n" + "=" * SECTION_WIDTH)
     print("📈 PERFORMANCE ANALYSIS")
     print("=" * SECTION_WIDTH)
     
@@ -134,7 +134,7 @@ def analyze_performance(
     valid_results.sort(key=lambda x: x.time)
     fastest = valid_results[0].time
     
-    print(f"\\n🏆 Performance Ranking (fastest to slowest):")
+    print(f"\n🏆 Performance Ranking (fastest to slowest):")
     print("-" * 50)
     
     # Default complexity mapping
@@ -169,12 +169,12 @@ def analyze_performance(
     
     # Show failed functions
     if failed_results:
-        print(f"\\n❌ Failed Functions:")
+        print(f"\n❌ Failed Functions:")
         for result in failed_results:
             print(f"   • {result.function.__name__}: Execution error")
     
     # Performance insights
-    print(f"\\n💡 Key Insights:")
+    print(f"\n💡 Key Insights:")
     if len(valid_results) > 1:
         fastest_name = valid_results[0].function.__name__
         slowest = valid_results[-1]
@@ -260,7 +260,7 @@ def compare_scale_performance(
         small_size: Size of small test array
         large_size: Size of large test array
     """
-    print(f"\\n🔍 Scale Comparison Analysis:")
+    print(f"\n🔍 Scale Comparison Analysis:")
     print("-" * 50)
     
     # Create dictionaries for easy lookup
@@ -299,7 +299,7 @@ def compare_scale_performance(
                 f"{scale_factor:>10.1f}x"
             )
     
-    print(f"\\n💡 Scale Analysis Insights:")
+    print(f"\n💡 Scale Analysis Insights:")
     print(f"   • Data size increased {large_size/small_size:.1f}x")
     print(f"   • Theoretical O(n) should scale linearly")
     print(f"   • Theoretical O(n²) should scale quadratically ({(large_size/small_size)**2:.0f}x)")

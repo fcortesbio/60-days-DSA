@@ -10,13 +10,13 @@ Date: October 2025
 """
 
 # Array sizes for testing
-STANDARD_ARRAY_SIZE = 100
-LARGE_ARRAY_SIZE = 1500
-EXTRA_LARGE_ARRAY_SIZE = 30000
+STANDARD_ARRAY_SIZE = 500
+LARGE_ARRAY_SIZE = 50000
+EXTRA_LARGE_ARRAY_SIZE = 1000000
 
 # Benchmarking parameters
 STANDARD_REPLICAS = 1000
-LARGE_REPLICAS = 100
+LARGE_REPLICAS = 150
 EXTRA_LARGE_REPLICAS = 10
 
 # Display formatting
@@ -43,7 +43,7 @@ DEFAULT_TEST_ARRAYS = {
 COMPLEXITY_MAP = {
     # Time complexities
     "O(1)": "Constant",
-    "O(log n)": "Logarithmic", 
+    "O(log n)": "Logarithmic",
     "O(n)": "Linear",
     "O(n log n)": "Linearithmic",
     "O(n²)": "Quadratic",

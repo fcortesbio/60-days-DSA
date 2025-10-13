@@ -6,7 +6,7 @@ This module provides dataclasses and type definitions used across different
 algorithm implementations for consistent data handling.
 
 Author: Andres
-Date: October 2024
+Date: October 2025
 """
 
 from dataclasses import dataclass
@@ -16,11 +16,12 @@ from typing import Callable, Any, Optional, Union
 @dataclass
 class TestCase:
     """Structure for algorithm test case data."""
+
     array: list[int]
     expected: Union[int, float, list, Any]
     name: str
     description: Optional[str] = None
-    
+
     def __post_init__(self):
         """Validate test case data after initialization."""
         if not self.name:
@@ -30,16 +31,17 @@ class TestCase:
 @dataclass
 class BenchmarkResult:
     """Structure for algorithm benchmark results."""
+
     function: Callable
     time: float
     memory_usage: Optional[float] = None
     iterations: Optional[int] = None
-    
+
     @property
     def function_name(self) -> str:
         """Get the function name for display purposes."""
         return self.function.__name__
-    
+
     @property
     def avg_time_per_call(self) -> float:
         """Calculate average time per call if iterations are available."""
@@ -48,16 +50,17 @@ class BenchmarkResult:
         return self.time
 
 
-@dataclass 
+@dataclass
 class PerformanceComparison:
     """Structure for comparing multiple algorithm implementations."""
+
     algorithm_name: str
     complexity: str
     benchmark_results: list[BenchmarkResult]
     best_case_time: Optional[float] = None
     worst_case_time: Optional[float] = None
     average_time: Optional[float] = None
-    
+
     def __post_init__(self):
         """Calculate statistics from benchmark results."""
         if self.benchmark_results:
@@ -70,18 +73,19 @@ class PerformanceComparison:
 @dataclass
 class ValidationResult:
     """Structure for algorithm validation results."""
+
     function_name: str
     test_case: TestCase
     actual_result: Any
     passed: bool
     error_message: Optional[str] = None
     execution_time: Optional[float] = None
-    
+
     @property
     def status_emoji(self) -> str:
         """Get emoji representation of test status."""
         return "✅" if self.passed else "❌"
-    
+
     @property
     def status_text(self) -> str:
         """Get text representation of test status."""

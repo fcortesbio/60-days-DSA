@@ -23,3 +23,17 @@ wheels/
 .installed.cfg
 *.egg
 PYTHONPATH
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+.gradle/
+build/
+.idea/
+*.iml
+.settings/
+.project
+.classpath

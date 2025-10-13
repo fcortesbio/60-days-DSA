@@ -26,7 +26,6 @@ function naive_brute_force(arr) {
   return total_sum;
 }
 
-// optimized_brute_force
 function optimized_brute_force(arr) {
   const n = arr.length;
   let total_sum = 0;
@@ -42,7 +41,6 @@ function optimized_brute_force(arr) {
   return total_sum;
 }
 
-// contribution_technique
 function contribution_technique(arr) {
   const n = arr.length;
   let contribution = (k, n) => (k + 1) * (n - k);
@@ -93,8 +91,64 @@ function vector_half_contribution(arr) {
 
 // m = (n + 1) // 2 ; // ceiling division for midpoint
 
+// Export functions for testing
+module.exports = {
+  naive_brute_force,
+  optimized_brute_force,
+  contribution_technique,
+  vectorized_contribution,
+  vector_half_contribution
+};
+
 // Run tests if this file is executed directly
 if (require.main === module) {
-  // TODO: Add test cases and run solutions
-  console.log("Day 1: Ready to implement!");
+  // Simple assertion-based tests
+  const assert = (actual, expected, description) => {
+    if (actual === expected) {
+      console.log(`✅ ${description}: ${actual}`);
+    } else {
+      console.log(`❌ ${description}: expected ${expected}, got ${actual}`);
+      process.exit(1);
+    }
+  };
+
+  const algorithms = [
+    { name: 'naive_brute_force', func: naive_brute_force },
+    { name: 'optimized_brute_force', func: optimized_brute_force },
+    { name: 'contribution_technique', func: contribution_technique },
+    { name: 'vectorized_contribution', func: vectorized_contribution },
+    { name: 'vector_half_contribution', func: vector_half_contribution }
+  ];
+
+  const testCases = [
+    { input: [1, 2, 3], expected: 20, name: "Basic example [1,2,3]" },
+    { input: [2, 1, 3], expected: 19, name: "Reordered [2,1,3]" },
+    { input: [5], expected: 5, name: "Single element [5]" },
+    { input: [], expected: 0, name: "Empty array" },
+    { input: [-1, 2, -3], expected: -4, name: "Mixed signs [-1,2,-3]" },
+    { input: [3, 3, 3], expected: 30, name: "Repeated elements [3,3,3]" }
+  ];
+
+  console.log('🧪 Running DSA Solution Tests...');
+  console.log('='.repeat(50));
+  
+  let totalTests = 0;
+  let passedTests = 0;
+  
+  algorithms.forEach(algorithm => {
+    console.log(`\n📋 Testing ${algorithm.name}:`);
+    testCases.forEach(testCase => {
+      try {
+        const result = algorithm.func(testCase.input);
+        assert(result, testCase.expected, `${testCase.name}`);
+        passedTests++;
+      } catch (error) {
+        console.log(`❌ ${testCase.name}: ${error.message}`);
+      }
+      totalTests++;
+    });
+  });
+  
+  console.log(`\n📊 Results: ${passedTests}/${totalTests} tests passed`);
+  console.log(passedTests === totalTests ? '🎉 All tests passed!' : '💥 Some tests failed!');
 }

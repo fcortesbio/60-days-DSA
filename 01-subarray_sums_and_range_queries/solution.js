@@ -4,7 +4,7 @@
  * JavaScript/Node.js Implementation
  *
  * Author: Andres
- * Date: October 2024
+ * Date: October 2025
  */
 
 // TODO: Implement solutions for both problems

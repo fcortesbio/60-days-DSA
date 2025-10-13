@@ -157,23 +157,6 @@ def vector_half_contribution(arr: list[int]) -> int:
     return total_sum
 
 
-def brute_force_O_n_squared(arr):
-    """
-    Calculates the sum of all subarray sums in O(n^2) time.
-    """
-    n = len(arr)
-    total_sum = 0
-    for i in range(n):
-        current_subarray_sum = 0
-        for j in range(i, n):
-            # Calculate the sum for arr[i...j] by adding arr[j] to the previous sum
-            current_subarray_sum += arr[j]
-            # Add the current subarray sum to the total
-            total_sum += current_subarray_sum
-
-    return total_sum
-
-
 def vector_numpy_half_contribution(arr: list[int] | np.ndarray) -> int:
     """
     Calculates sum of all subarray sums using NumPy with symmetric optimization.
@@ -372,7 +355,6 @@ if __name__ == "__main__":
         if "numpy" not in r["function"].__name__
         and r["function"].__name__ != "naive_brute_force"
         and r["function"].__name__ != "optimized_brute_force"
-        and r["function"].__name__ != "brute_force_O_n_squared"
     ]
     numpy_algos = [r for r in results if "numpy" in r["function"].__name__]
 

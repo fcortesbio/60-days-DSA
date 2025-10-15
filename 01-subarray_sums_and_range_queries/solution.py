@@ -45,8 +45,10 @@ def naive_brute_force(arr: list[int]) -> int:
     total_sum: int = 0
     for i in range(n):
         for j in range(i, n):
-            # Third loop implicit in sum() function
-            subarray_sum: int = sum(arr[i : j + 1])
+            # Explicit third loop for consistency with JS/Java
+            subarray_sum: int = 0
+            for k in range(i, j + 1):
+                subarray_sum += arr[k]
             total_sum += subarray_sum
     return total_sum
 
@@ -203,31 +205,42 @@ def vector_numpy_full_contribution(arr: list[int] | np.ndarray) -> int:
 
 
 def main() -> None:
-    """Main execution function."""
-    # Define algorithm functions
+    """Main execution function for testing - consistent with JS/Java."""
+    # Define core algorithm functions (same 5 as JS/Java)
     functions = [
         naive_brute_force,
         optimized_brute_force,
         contribution_technique,
         vectorized_contribution,
         vector_half_contribution,
-        vector_numpy_full_contribution,
-        vector_numpy_half_contribution,
     ]
 
-    # Define test cases
+    # Define test cases (same as JS/Java)
     test_cases = [
-        TestCase(array=[1, 2, 3], expected=20, name="Test 1: [1, 2, 3]"),
-        TestCase(array=[2, 1, 3], expected=19, name="Test 2: [2, 1, 3]"),
+        TestCase(array=[1, 2, 3], expected=20, name="Basic example [1,2,3]"),
+        TestCase(array=[2, 1, 3], expected=19, name="Reordered [2,1,3]"),
+        TestCase(array=[5], expected=5, name="Single element [5]"),
+        TestCase(array=[], expected=0, name="Empty array"),
+        TestCase(array=[-1, 2, -3], expected=-4, name="Mixed signs [-1,2,-3]"),
+        TestCase(array=[3, 3, 3], expected=30, name="Repeated elements [3,3,3]"),
     ]
 
-    # Run validation tests
-    run_validation_tests(functions, test_cases)
+    print("🧪 Running DSA Solution Tests...")
+    print("=" * 50)
+    
+    # Run validation tests only (like JS/Java)
+    run_validation_tests(functions, test_cases, verbose=True)
+    
 
-    # Standard benchmarking
-    standard_array = list(range(STANDARD_ARRAY_SIZE))
-    standard_results = benchmark_functions(functions, standard_array, STANDARD_REPLICAS)
-    analyze_performance(standard_results, STANDARD_ARRAY_SIZE)
+
+    # Smaller arrays for benchmarking to avoid performance issues
+    print("⚡ Performance Benchmarking...")
+    print("=" * 50)
+    
+    # Small-scale benchmarking
+    small_array = list(range(100))  # Reduced from 500
+    small_results = benchmark_functions(functions, small_array, 100)  # Reduced replicas
+    analyze_performance(small_results, len(small_array))
 
     # Large-scale benchmarking (contribution algorithms only)
     contribution_functions = [
@@ -238,11 +251,11 @@ def main() -> None:
         vector_numpy_half_contribution,
     ]
 
-    large_array = list(range(LARGE_ARRAY_SIZE))
+    large_array = list(range(10000))  # Reduced from 50000
     large_results = benchmark_functions(
-        contribution_functions, large_array, LARGE_REPLICAS
+        contribution_functions, large_array, 50  # Reduced replicas
     )
-    analyze_performance(large_results, LARGE_ARRAY_SIZE)
+    analyze_performance(large_results, len(large_array))
 
 
 if __name__ == "__main__":

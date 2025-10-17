@@ -9,7 +9,7 @@ import java.util.List;
  * Author: Andres
  * Date: October 2025
  */
-public class rangeSumQuery {
+public class RangeSumQuery {
     
     /**
      * Calculates the sum of all elements from L to R indices in the A array (0-indexed)

@@ -6,7 +6,7 @@
  * Date: October 2025
  */
 
-public class Solution {
+public class SubArraySum{
 
     /**
      * Main method to run tests
